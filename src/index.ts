@@ -8,13 +8,13 @@ import './utils/supabase';
 const app = express();
 const port = 8888;
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (res: Response) => {
   res.send('Welcome to the API');
 });
 
 app.use('/api', router);
 
-app.use((err: Error, req: Request, res: Response, next: Function) => {
+app.use((err: Error, req: Request, res: Response) => {
   console.error(err.stack);
   res.status(500).json({ error: "Internal Server Error" });
 });
