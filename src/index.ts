@@ -1,11 +1,18 @@
 import express, { Request, Response } from "express";
+import dotenv from 'dotenv';
+dotenv.config();
+import router from './routes';
+
+import './utils/supabase';
 
 const app = express();
 const port = 8888;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from Express.js with TypeScript!");
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome to the API');
 });
+
+app.use('/api', router);
 
 app.use((err: Error, req: Request, res: Response, next: Function) => {
   console.error(err.stack);
