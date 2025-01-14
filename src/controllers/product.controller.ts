@@ -2,6 +2,7 @@ import { Request, Response, RequestHandler } from "express";
 import ProductService from "../services/product.service";
 
 class ProductController {
+
   getAllProducts: RequestHandler = async (req: Request, res: Response) => {
     try {
       const products = await ProductService.getAllProducts();
@@ -56,6 +57,7 @@ class ProductController {
       res.status(500).json({ error: "Failed to delete product" });
     }
   };
+  
 }
 
 const productController = new ProductController();

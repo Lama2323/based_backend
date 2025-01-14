@@ -7,6 +7,7 @@ import {
 } from '../interfaces';
 
 class ProductService {
+
   async getAllProducts(): Promise<Product[]> {
     const { data, error }: any = await supabase
       .from('products')
@@ -43,7 +44,7 @@ class ProductService {
       throw new Error('Product not found');
     }
 
-    // 2. Lấy các biến thể của sản phẩm
+    // 2. Lấy các biến thể của sản phẩm (bao gồm cả biến thể mặc định)
     const { data: variants, error: variantsError } = await supabase
       .from('product_variants')
       .select('*')
@@ -52,9 +53,9 @@ class ProductService {
     if (variantsError) {
       throw new Error(variantsError.message);
     }
-    
-    if (!variants) {
-      throw new Error('Product variants not found');
+
+    if (!variants || variants.length === 0) {
+      throw new Error('Product variants not found. This might be a data integrity issue.');
     }
 
     // 3. Lấy thông tin thuộc tính và giá trị của từng biến thể
@@ -70,6 +71,14 @@ class ProductService {
           throw new Error(variantAttributesError.message);
         }
 
+        // Nếu không có thuộc tính, trả về biến thể với mảng attributes rỗng
+        if (!variantAttributes || variantAttributes.length === 0) {
+          return {
+            ...variant,
+            attributes: [],
+          };
+        }
+
         const attributes = await Promise.all(
           variantAttributes.map(async (va) => {
             // Lấy thông tin attribute_value
@@ -83,6 +92,7 @@ class ProductService {
             if (attributeValueError) {
               throw new Error(attributeValueError.message);
             }
+
             // lấy thông tin attribute
             const { data: attribute, error: attributeError } =
               await supabase
@@ -154,6 +164,7 @@ class ProductService {
       throw new Error(error.message);
     }
   }
+  
 }
 
 const productService = new ProductService();
